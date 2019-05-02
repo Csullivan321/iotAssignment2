@@ -1,0 +1,39 @@
+#include <rgb_lcd.h>
+#include <HttpClient.h>
+
+rgb_lcd lcd;
+const int buzz = 4;
+
+void setup() {
+  // put your setup code here, to run once:
+  pinMode(buzz, OUTPUT);
+  lcd.begin(16,2);
+  //red,green,blue
+  lcd.setRGB(255,0,0);
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+  int moisture = analogRead(A1);
+  if (moisture <= 50 && moisture >= 0)
+  {
+    lcd.setCursor(0,0);
+    lcd.println("Ready!!         ");
+  }
+  if (moisture > 50 && moisture <= 300)
+  {
+    lcd.setCursor(0,0);
+    lcd.println("Moisture detected");
+  }
+  else if (moisture > 300)
+  {
+    lcd.setCursor(0,0);
+    HttpClient Client;
+
+    Client.get("http://api.pushingbox.com/pushingbox?devid=v7A872E1A6FEFD8F");
+    delay(20000);
+    lcd.setCursor(0,0);
+    lcd.println("Moisture high   ");
+    digitalWrite(buzz, LOW);
+  }
+}
